@@ -1,1 +1,0 @@
-"""ProofQuery test support package."""
