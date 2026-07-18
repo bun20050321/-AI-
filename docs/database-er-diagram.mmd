@@ -1,0 +1,183 @@
+erDiagram
+    product_models {
+        bigint id PK
+        varchar model_code UK
+        varchar model_name
+        varchar product_line
+        text description
+        varchar status
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    product_versions {
+        bigint id PK
+        bigint product_model_id FK
+        varchar version_code
+        varchar manual_version
+        date release_date
+        timestamp effective_from
+        timestamp effective_to
+        varchar status
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    manual_documents {
+        bigint id PK
+        varchar doc_id UK
+        bigint product_model_id FK
+        bigint product_version_id FK
+        varchar title
+        varchar source_file
+        varchar file_type
+        varchar file_hash UK
+        varchar language
+        varchar parse_status
+        timestamp published_at
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    manual_sections {
+        bigint id PK
+        bigint document_id FK
+        bigint parent_section_id FK
+        varchar section_code
+        varchar section_title
+        int section_level
+        int sort_order
+        int page_start
+        int page_end
+        boolean review_required
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    manual_chunks {
+        bigint id PK
+        varchar chunk_id UK
+        bigint document_id FK
+        bigint section_id FK
+        bigint product_model_id FK
+        bigint product_version_id FK
+        varchar section_title
+        int page_no
+        int page_start
+        int page_end
+        text content
+        varchar content_hash
+        int token_count
+        int char_count
+        boolean review_required
+        varchar status
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    chunk_sources {
+        bigint id PK
+        bigint chunk_id FK
+        bigint document_id FK
+        bigint section_id FK
+        varchar source_file
+        int source_page_no
+        varchar source_section_title
+        varchar source_anchor
+        varchar source_text_hash
+        timestamp created_at
+    }
+
+    vector_index_manifests {
+        bigint id PK
+        varchar index_name
+        varchar index_version
+        varchar embedding_model
+        varchar embedding_model_version
+        int embedding_dimension
+        varchar vector_store_type
+        int chunk_count
+        varchar build_status
+        timestamp built_at
+        text metadata_json
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    chunk_embedding_metadata {
+        bigint id PK
+        bigint chunk_id FK
+        bigint vector_index_manifest_id FK
+        varchar embedding_status
+        varchar embedding_model
+        int embedding_dimension
+        varchar external_vector_id
+        varchar content_hash
+        text error_message
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    repair_contacts {
+        bigint id PK
+        bigint product_model_id FK
+        varchar region_code
+        varchar region_name
+        varchar contact_type
+        varchar contact_value
+        varchar service_hours
+        int priority
+        varchar status
+        timestamp effective_from
+        timestamp effective_to
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    golden_questions {
+        bigint id PK
+        varchar question_id UK
+        bigint product_model_id FK
+        bigint product_version_id FK
+        varchar scenario
+        text question
+        text expected_answer_summary
+        bigint expected_chunk_id FK
+        boolean should_refuse
+        boolean should_refer_repair
+        varchar status
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    database_connection_checks {
+        bigint id PK
+        varchar check_id UK
+        varchar database_type
+        varchar database_version
+        varchar check_status
+        text checked_tables
+        text sample_data_summary
+        text error_message
+        timestamp checked_at
+        timestamp created_at
+    }
+
+    product_models ||--o{ product_versions : has
+    product_models ||--o{ manual_documents : owns
+    product_versions ||--o{ manual_documents : applies_to
+    manual_documents ||--o{ manual_sections : contains
+    manual_sections ||--o{ manual_sections : parent_of
+    manual_documents ||--o{ manual_chunks : contains
+    manual_sections ||--o{ manual_chunks : contains
+    product_models ||--o{ manual_chunks : scopes
+    product_versions ||--o{ manual_chunks : scopes
+    manual_chunks ||--o{ chunk_sources : traced_by
+    manual_documents ||--o{ chunk_sources : source_document
+    manual_sections ||--o{ chunk_sources : source_section
+    vector_index_manifests ||--o{ chunk_embedding_metadata : includes
+    manual_chunks ||--o{ chunk_embedding_metadata : embedding_meta
+    product_models ||--o{ repair_contacts : has
+    product_models ||--o{ golden_questions : has
+    product_versions ||--o{ golden_questions : applies_to
+    manual_chunks ||--o{ golden_questions : expected_source
