@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: rag-kb-demo
+  ai:
+    model:
+      chat: none
+      embedding: none
+      image: none
+      moderation: none
+      audio:
+        speech: none
+        transcription: none
