@@ -1,0 +1,189 @@
+:root {
+  color: #1f2937;
+  background: #f4f7fb;
+  font-family: Inter, "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+  background:
+    linear-gradient(135deg, rgba(28, 120, 95, 0.08), transparent 38%),
+    #f4f7fb;
+}
+
+.app-sidebar {
+  border-right: 1px solid #dce5ee;
+  background: #ffffff;
+  padding: 20px 14px;
+}
+
+.brand-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 6px 22px;
+}
+
+.brand-mark {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 8px;
+  background: #1c785f;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.brand-block h1,
+.app-header h2,
+.page-heading h3 {
+  margin: 0;
+  letter-spacing: 0;
+}
+
+.brand-block h1 {
+  font-size: 18px;
+}
+
+.brand-block p,
+.page-heading p,
+.workspace-page p {
+  margin: 4px 0 0;
+  color: #64748b;
+}
+
+.entry-menu {
+  border-right: 0;
+}
+
+.entry-menu .el-menu-item {
+  border-radius: 8px;
+  margin: 4px 0;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid #dce5ee;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(8px);
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: #1c785f;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.app-header h2 {
+  font-size: 22px;
+}
+
+.health-panel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.health-detail {
+  color: #64748b;
+  cursor: default;
+  font-size: 13px;
+}
+
+.app-main {
+  padding: 24px;
+}
+
+.workspace-page {
+  max-width: 1040px;
+}
+
+.page-heading {
+  margin-bottom: 18px;
+}
+
+.page-heading h3 {
+  font-size: 28px;
+}
+
+.el-card {
+  border-color: #dce5ee;
+  border-radius: 8px;
+}
+
+.el-card strong {
+  display: block;
+  color: #1c785f;
+  font-size: 34px;
+  line-height: 1;
+}
+
+.chat-placeholder {
+  max-width: 720px;
+}
+
+.chat-line {
+  max-width: 80%;
+  margin: 10px 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  line-height: 1.6;
+}
+
+.user-line {
+  margin-left: auto;
+  background: #1c785f;
+  color: #ffffff;
+}
+
+.assistant-line {
+  background: #eef2f7;
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    display: block;
+  }
+
+  .app-sidebar {
+    width: 100% !important;
+    border-right: 0;
+    border-bottom: 1px solid #dce5ee;
+  }
+
+  .app-header {
+    height: auto !important;
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .health-panel {
+    flex-wrap: wrap;
+  }
+
+  .app-main {
+    padding: 16px;
+  }
+}
