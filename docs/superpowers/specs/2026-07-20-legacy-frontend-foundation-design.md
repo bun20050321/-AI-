@@ -26,7 +26,7 @@
 | --- | --- | --- |
 | `/repair-orders` | `RepairOrders.vue` | 默认页面，展示维修工单占位内容和后端健康状态 |
 | `/knowledge-docs` | `KnowledgeDocs.vue` | 展示知识文档基础占位内容 |
-| `/ai-chat` | `AiChat.vue` | 展示 AI 问答基础占位内容 |
+| `/ai-chat` | `AiQuestion.vue` | 展示 AI 问答基础占位内容 |
 
 根路径 `/` 重定向到 `/repair-orders`。未知路径也重定向到默认页面，保证菜单与主内容始终处于有效状态。现有 `UserPage.vue`、`MyRepair.vue`、`RepairOrder.vue`、`KnowledgeDoc.vue` 和 `AIChat.vue` 文件继续保留，但不进入新的默认路由。
 

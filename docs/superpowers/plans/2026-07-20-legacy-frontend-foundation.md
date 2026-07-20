@@ -171,7 +171,7 @@ git commit -m "feat: add frontend http client"
 - Create: `前端/src/styles.css`
 - Create: `前端/src/views/RepairOrders.vue`
 - Create: `前端/src/views/KnowledgeDocs.vue`
-- Create: `前端/src/views/AiChat.vue`
+- Create: `前端/src/views/AiQuestion.vue`
 
 **Interfaces:**
 - Consumes: Vue Router 的 `RouterLink` 和 `RouterView`。
@@ -281,7 +281,7 @@ npm test -- tests/app-navigation.test.js
 </template>
 ```
 
-创建 `src/views/AiChat.vue`：
+创建 `src/views/AiQuestion.vue`：
 
 ```vue
 <template>
@@ -325,7 +325,7 @@ export const routes = [
   {
     path: '/ai-chat',
     name: 'AiChat',
-    component: () => import('@/views/AiChat.vue')
+    component: () => import('@/views/AiQuestion.vue')
   },
   {
     path: '/:pathMatch(.*)*',
@@ -616,7 +616,7 @@ npm test -- tests/app-navigation.test.js
 - [ ] **Step 7: 提交应用壳层和路由**
 
 ```powershell
-git add -- '前端/tests/app-navigation.test.js' '前端/src/App.vue' '前端/src/main.js' '前端/src/router/index.js' '前端/src/styles.css' '前端/src/views/RepairOrders.vue' '前端/src/views/KnowledgeDocs.vue' '前端/src/views/AiChat.vue'
+git add -- '前端/tests/app-navigation.test.js' '前端/src/App.vue' '前端/src/main.js' '前端/src/router/index.js' '前端/src/styles.css' '前端/src/views/RepairOrders.vue' '前端/src/views/KnowledgeDocs.vue' '前端/src/views/AiQuestion.vue'
 git commit -m "feat: add frontend application shell"
 ```
 

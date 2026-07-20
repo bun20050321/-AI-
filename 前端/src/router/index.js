@@ -1,15 +1,28 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-const routes = [
+export const routes = [
   {
     path: '/',
-    name: 'User',
-    component: () => import('@/views/UserPage.vue')
+    redirect: '/repair-orders'
   },
   {
-    path: '/repair',
-    name: 'MyRepair',
-    component: () => import('@/views/MyRepair.vue')
+    path: '/repair-orders',
+    name: 'RepairOrders',
+    component: () => import('@/views/RepairOrders.vue')
+  },
+  {
+    path: '/knowledge-docs',
+    name: 'KnowledgeDocs',
+    component: () => import('@/views/KnowledgeDocs.vue')
+  },
+  {
+    path: '/ai-chat',
+    name: 'AiChat',
+    component: () => import('@/views/AiQuestion.vue')
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/repair-orders'
   }
 ]
 
