@@ -1,0 +1,93 @@
+.repair-filter-card,
+.repair-list-card {
+  margin-bottom: 16px;
+}
+
+.repair-filter-card .el-form {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+.repair-filter-card .el-form-item {
+  margin-bottom: 4px;
+}
+
+.repair-filter-card .el-input {
+  width: 190px;
+}
+
+.repair-filter-card .filter-actions {
+  margin-left: auto;
+}
+
+.repair-alert {
+  margin-bottom: 14px;
+}
+
+.repair-pagination {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+.card-header-actions,
+.list-actions {
+  display: flex;
+  align-items: center;
+}
+
+.card-header-actions {
+  justify-content: space-between;
+}
+
+.list-actions {
+  gap: 10px;
+}
+
+.record-count {
+  margin-left: 10px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 16px;
+}
+
+.form-grid .el-form-item:last-child {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 760px) {
+  .repair-filter-card .el-input {
+    width: 100%;
+  }
+
+  .repair-filter-card .filter-actions {
+    margin-left: 0;
+  }
+
+  .repair-pagination {
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+
+  .card-header-actions {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .list-actions {
+    flex-wrap: wrap;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

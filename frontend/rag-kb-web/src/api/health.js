@@ -4,7 +4,11 @@ export const BACKEND_DISCONNECTED_TEXT = '后端服务未连接'
 
 export async function checkBackendHealth() {
   try {
-    const response = await request.get('/api/appliance')
+    const response = await request.get('/api/health')
+
+    if (response?.code !== 0) {
+      throw new Error('Health check returned a non-success response')
+    }
 
     return {
       connected: true,

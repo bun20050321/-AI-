@@ -16,8 +16,9 @@ describe('checkBackendHealth', () => {
 
   it('requests /api/health and reports the backend as connected', async () => {
     request.get.mockResolvedValueOnce({
+      code: 0,
       data: {
-        status: 'UP'
+        status: 'ok'
       }
     })
 
@@ -25,7 +26,7 @@ describe('checkBackendHealth', () => {
       connected: true,
       message: '后端服务已连接',
       data: {
-        status: 'UP'
+        status: 'ok'
       }
     })
     expect(request.get).toHaveBeenCalledWith('/api/health')
