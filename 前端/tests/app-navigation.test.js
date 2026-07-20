@@ -1,8 +1,21 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { createMemoryHistory, createRouter } from 'vue-router'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import App from '@/App.vue'
 import { routes } from '@/router'
+
+vi.mock('@/utils/http', () => ({
+  default: {
+    get: vi.fn().mockResolvedValue({
+      code: 0,
+      message: 'success',
+      data: {
+        status: 'ok',
+        service: 'rag-kb-demo'
+      }
+    })
+  }
+}))
 
 async function mountAt(path) {
   const router = createRouter({
