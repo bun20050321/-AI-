@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>我的维修 - 家电说明书助手</title>
+  <style>
+    :root {
+      --page: #f4f7fa; --surface: #ffffff; --text: #182635; --muted: #667789;
+      --line: #d9e4ee; --primary: #2f6fae; --accent: #25a7d7;
+      --success: #36a269; --warning: #f59e42; --error: #dc2626;
+      --shadow: 0 18px 45px rgba(35, 57, 78, 0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      margin: 0; min-height: 100vh;
+      background: var(--page);
+      color: var(--text);
+      font-family: "Microsoft YaHei","PingFang SC","Segoe UI",Arial,sans-serif;
+    }
+    button, select, input, textarea { font: inherit; }
+
+    .page { width: min(1200px, calc(100% - 32px)); margin: 0 auto; padding: 24px 0; }
+
+    /* ===== Top Nav ===== */
+    .top-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px; padding: 0 4px;
+    }
+    .top-nav h1 { font-size: 20px; display: flex; align-items: center; gap: 8px; }
+    .nav-links { display: flex; gap: 10px; }
+    .nav-link {
+      font-size: 13px; padding: 8px 16px; border-radius: 8px;
+      background: white; border: 1px solid var(--line);
+      color: var(--primary); text-decoration: none; font-weight: 600;
+      transition: all 0.2s;
+    }
+    .nav-link:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+    /* ===== Summary Bar ===== */
+    .summary-bar {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+      margin-bottom: 24px;
+    }
+    .summary-card {
+      padding: 20px; border-radius: 12px; border: 1px solid var(--line);
+      background: white; box-shadow: var(--shadow);
+      text-align: center; transition: transform 0.2s;
+    }
+    .summary-card:hover { transform: translateY(-2px); }
+    .summary-value { font-size: 32px; font-weight: 700; margin-bottom: 4px; }
+    .summary-label { font-size: 13px; color: var(--muted); font-weight: 600; }
+    .summary-card.all .summary-value { color: var(--primary); }
+    .summary-card.pending .summary-value { color: var(--warning); }
+    .summary-card.completed .summary-value { color: var(--success); }
+
+    /* ===== Repair List ===== */
+    .list-panel {
+      background: white; border-radius: 12px; border: 1px solid var(--line);
+      box-shadow: var(--shadow); overflow: hidden;
+    }
+    .list-header {
+      padding: 18px 24px; border-bottom: 1px solid var(--line);
+      background: linear-gradient(135deg,#fbfdff,#f5faff);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .list-header h2 { font-size: 16px; margin: 0; }
+    .list-count { font-size: 12px; color: var(--muted); font-weight: 600; }
+
+    .repair-list { padding: 0; }
+    .repair-item {
+      padding: 20px 24px; border-bottom: 1px solid #f1f5f9;
+      transition: background 0.15s; display: grid;
+      grid-template-columns: 1fr auto auto; gap: 16px; align-items: center;
+    }
+    .repair-item:last-child { border-bottom: 0; }
+    .repair-item:hover { background: #f8fbff; }
+
+    .repair-info h4 { font-size: 15px; margin: 0 0 6px; display: flex; align-items: center; gap: 8px; }
+    .repair-meta { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: var(--muted); }
+    .repair-meta span { display: flex; align-items: center; gap: 4px; }
+
+    .repair-time { text-align: center; min-width: 140px; }
+    .repair-time .time-label { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
+    .repair-time .time-value { font-size: 13px; color: var(--text); font-weight: 500; }
+
+    .repair-status { text-align: center; min-width: 80px; }
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 600;
+    }
+    .status-badge.pending { background: #fef3c7; color: #92400e; }
+    .status-badge.processing { background: #cffafe; color: #0e7490; }
+    .status-badge.completed { background: #d1fae5; color: #065f46; }
+    .status-badge.cancelled { background: #fee2e2; color: #991b1b; }
+
+    .detail-btn {
+      font-size: 12px; padding: 6px 14px; border-radius: 8px;
+      border: 1px solid var(--line); background: white;
+      color: var(--primary); cursor: pointer; font-weight: 600;
+      transition: all 0.15s; margin-left: 8px;
+    }
+    .detail-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+    /* Empty state */
+    .empty-state { text-align: center; padding: 60px 20px; }
+    .empty-state .icon { font-size: 56px; margin-bottom: 16px; }
+    .empty-state h3 { font-size: 16px; color: var(--text); margin-bottom: 8px; }
+    .empty-state p { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .empty-state .go-home {
+      display: inline-block; padding: 10px 24px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white; text-decoration: none; border-radius: 8px;
+      font-size: 13px; font-weight: 600; transition: all 0.2s;
+    }
+    .empty-state .go-home:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(47,111,174,0.25); }
+
+    /* ===== Detail Modal ===== */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.45);
+      display: none; align-items: center; justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: white; border-radius: 16px;
+      width: min(520px, calc(100% - 32px));
+      max-height: 85vh; overflow-y: auto;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+      animation: modalIn 0.25s ease-out;
+    }
+    @keyframes modalIn { from { opacity:0; transform:scale(0.92) translateY(16px);} to { opacity:1; transform:scale(1) translateY(0);} }
+    .modal-header { padding: 20px 24px 0; display: flex; align-items: center; gap: 10px; }
+    .modal-header h2 { margin: 0; font-size: 18px; }
+    .modal-close { margin-left: auto; width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--line); background: #f8fbfe; color: var(--muted); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .modal-close:hover { background: #fee2e2; color: var(--error); border-color: #fecaca; }
+    .modal-body { padding: 16px 24px 24px; }
+
+    .detail-section { margin-bottom: 20px; }
+    .detail-section h4 { font-size: 13px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; }
+    .detail-item { display: flex; flex-direction: column; gap: 2px; }
+    .detail-item.full { grid-column: 1 / -1; }
+    .detail-item label { font-size: 11px; color: var(--muted); font-weight: 600; }
+    .detail-item span { font-size: 13px; color: var(--text); }
+    .detail-item .ai-diag { background: #f8fbfe; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--line); font-size: 13px; line-height: 1.6; max-height: 120px; overflow-y: auto; }
+
+    footer { margin-top: 28px; text-align: center; padding-bottom: 20px; }
+    footer p { font-size: 12px; color: var(--muted); }
+
+    @media (max-width: 768px) {
+      .summary-bar { grid-template-columns: 1fr; }
+      .repair-item { grid-template-columns: 1fr; gap: 10px; }
+      .repair-time { text-align: left; }
+      .repair-status { text-align: left; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .top-nav { flex-direction: column; gap: 10px; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<main class="page">
+  <!-- Top Navigation -->
+  <div class="top-nav">
+    <h1>&#128295; 我的维修</h1>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">&#128100; 用户端</a>
+      <a href="admin.html" class="nav-link" style="background:var(--primary);color:white;">&#128295; 我的维修</a>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="summary-bar" id="summaryBar">
+    <div class="summary-card all">
+      <div class="summary-value" id="statAll">0</div>
+      <div class="summary-label">全部工单</div>
+    </div>
+    <div class="summary-card pending">
+      <div class="summary-value" id="statPending">0</div>
+      <div class="summary-label">待处理</div>
+    </div>
+    <div class="summary-card completed">
+      <div class="summary-value" id="statCompleted">0</div>
+      <div class="summary-label">已结束</div>
+    </div>
+  </div>
+
+  <!-- Repair List -->
+  <div class="list-panel">
+    <div class="list-header">
+      <h2>&#128203; 我的维修工单</h2>
+      <span class="list-count" id="listCount">共 0 条</span>
+    </div>
+    <div class="repair-list" id="repairList">
+      <!-- JS填充 -->
+    </div>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <div class="icon">&#128221;</div>
+      <h3>暂无维修工单</h3>
+      <p>您还没有提交过维修预约</p>
+      <a href="index.html" class="go-home">&#127968; 前往提交报修</a>
+    </div>
+  </div>
+
+  <footer><p>家电说明书助手 · 我的维修 · 用户个人工单管理</p></footer>
+</main>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span style="font-size:22px;">&#128295;</span>
+      <h2>工单详情 #<span id="detailId"></span></h2>
+      <button class="modal-close" onclick="closeDetailModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="detailBody"></div>
+  </div>
+</div>
+
+<script>
+// ===================== CONFIG =====================
+const API_BASE = (typeof AI_CONFIG !== 'undefined' && AI_CONFIG.apiBaseUrl)
+  ? AI_CONFIG.apiBaseUrl
+  : (localStorage.getItem('ai_api_url') || 'http://localhost:3000');
+let allAppointments = [];
+let currentDetailId = null;
+
+const statusLabels = {
+  pending: '待处理', confirmed: '待处理', assigned: '待处理',
+  processing: '处理中', completed: '已结束', cancelled: '已取消'
+};
+const statusClasses = {
+  pending: 'pending', confirmed: 'pending', assigned: 'pending',
+  processing: 'processing', completed: 'completed', cancelled: 'cancelled'
+};
+
+// ===================== LOAD DATA =====================
+async function loadAppointments() {
+  // 尝试从API获取用户自己的工单
+  try {
+    const res = await fetch(API_BASE + '/api/repair/my', {
+      signal: AbortSignal.timeout(5000),
+      headers: { 'Authorization': 'Bearer ' + (localStorage.getItem('user_token') || '') }
+    });
+    if (res.ok) {
+      allAppointments = await res.json();
+      renderList();
+      updateSummary();
+      return;
+    }
+  } catch (e) {}
+
+  // Fallback: 从localStorage读取（用户自己提交的工单）
+  allAppointments = JSON.parse(localStorage.getItem('repair_appointments') || '[]');
+  renderList();
+  updateSummary();
+}
+
+function updateSummary() {
+  const counts = { all: allAppointments.length, pending: 0, completed: 0 };
+  allAppointments.forEach(a => {
+    if (a.status === 'pending' || a.status === 'confirmed' || a.status === 'assigned' || a.status === 'processing') {
+      counts.pending++;
+    } else if (a.status === 'completed') {
+      counts.completed++;
+    }
+  });
+  document.getElementById('statAll').textContent = counts.all;
+  document.getElementById('statPending').textContent = counts.pending;
+  document.getElementById('statCompleted').textContent = counts.completed;
+}
+
+// ===================== RENDER LIST =====================
+function renderList() {
+  const listEl = document.getElementById('repairList');
+  const empty = document.getElementById('emptyState');
+  const count = document.getElementById('listCount');
+
+  count.textContent = '共 ' + allAppointments.length + ' 条';
+
+  if (allAppointments.length === 0) {
+    listEl.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  listEl.innerHTML = allAppointments.sort((a,b) => (b.id||0) - (a.id||0)).map(a => {
+    const stClass = statusClasses[a.status] || 'pending';
+    const stLabel = statusLabels[a.status] || a.status;
+    const timeDisplay = a.preferredDate
+      ? a.preferredDate + ' ' + (a.preferredTime==='morning'?'上午':a.preferredTime==='afternoon'?'下午':a.preferredTime==='evening'?'晚上':'')
+      : '<span style="color:var(--muted)">未指定</span>';
+
+    return '<div class="repair-item">' +
+      '<div class="repair-info">' +
+        '<h4>' + (a.applianceModel || '-') + ' <span style="font-size:12px;color:var(--muted);font-weight:500;">#' + (a.id || '-') + '</span></h4>' +
+        '<div class="repair-meta">' +
+          '<span>&#128205; ' + (a.userAddress || '-') + '</span>' +
+          '<span>&#128172; ' + ((a.faultDescription || '-').substring(0, 30) + ((a.faultDescription||'').length > 30 ? '...' : '')) + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="repair-time">' +
+        '<div class="time-label">预约时间</div>' +
+        '<div class="time-value">' + timeDisplay + '</div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:8px;">' +
+        '<div class="repair-status"><span class="status-badge ' + stClass + '">' + stLabel + '</span></div>' +
+        '<button class="detail-btn" onclick="openDetail(' + a.id + ')">详情</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ===================== DETAIL MODAL =====================
+function openDetail(id) {
+  const a = allAppointments.find(x => x.id === id);
+  if (!a) return;
+  currentDetailId = id;
+
+  document.getElementById('detailId').textContent = a.id || '-';
+
+  const stClass = statusClasses[a.status] || 'pending';
+  const stLabel = statusLabels[a.status] || a.status;
+  const timeDisplay = a.preferredDate
+    ? a.preferredDate + ' ' + (a.preferredTime==='morning'?'上午':a.preferredTime==='afternoon'?'下午':a.preferredTime==='evening'?'晚上':'')
+    : '未指定';
+
+  document.getElementById('detailBody').innerHTML =
+    '<div class="detail-section">' +
+      '<h4>工单信息</h4>' +
+      '<div class="detail-grid">' +
+        '<div class="detail-item"><label>工单编号</label><span>#' + (a.id || '-') + '</span></div>' +
+        '<div class="detail-item"><label>当前状态</label><span class="status-badge ' + stClass + '">' + stLabel + '</span></div>' +
+        '<div class="detail-item"><label>报修电器</label><span>' + (a.applianceModel || '-') + '</span></div>' +
+        '<div class="detail-item"><label>预约上门</label><span>' + timeDisplay + '</span></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="detail-section">' +
+      '<h4>联系信息</h4>' +
+      '<div class="detail-grid">' +
+        '<div class="detail-item"><label>姓名</label><span>' + (a.userName || '-') + '</span></div>' +
+        '<div class="detail-item"><label>电话</label><span>' + (a.userPhone || '-') + '</span></div>' +
+        '<div class="detail-item full"><label>地址</label><span>' + (a.userAddress || '-') + '</span></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="detail-section">' +
+      '<h4>故障信息</h4>' +
+      '<div class="detail-grid">' +
+        '<div class="detail-item full"><label>故障描述</label><span>' + (a.faultDescription || '-') + '</span></div>' +
+        '<div class="detail-item full"><label>AI 诊断记录</label><div class="ai-diag">' + (a.aiDiagnosis || '无记录') + '</div></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="detail-section">' +
+      '<h4>进度追踪</h4>' +
+      '<div class="detail-grid">' +
+        '<div class="detail-item"><label>提交时间</label><span>' + (a.createdAt ? new Date(a.createdAt).toLocaleString('zh-CN') : '-') + '</span></div>' +
+        '<div class="detail-item"><label>最后更新</label><span>' + (a.updatedAt ? new Date(a.updatedAt).toLocaleString('zh-CN') : '-') + '</span></div>' +
+      '</div>' +
+    '</div>';
+
+  document.getElementById('detailModal').classList.add('active');
+}
+
+function closeDetailModal() {
+  document.getElementById('detailModal').classList.remove('active');
+  currentDetailId = null;
+}
+
+document.getElementById('detailModal').addEventListener('click', function(e) {
+  if (e.target === this) closeDetailModal();
+});
+
+// ===================== INIT =====================
+loadAppointments();
+</script>
+
+<script src="admin-interface-api-extension.js"></script>
+</body>
+</html>
